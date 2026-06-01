@@ -635,6 +635,14 @@
       margin-top: 0.5rem;
     }
 
+    .wishes-empty {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 1rem 0;
+    }
+
     /* ===== FOOTER ===== */
     .footer-section {
       background: linear-gradient(180deg, #6B5550 0%, #5A4540 100%);

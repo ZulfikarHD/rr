@@ -1,0 +1,7 @@
+# Guest comments live only on the server (SQLite) — never commit them,
+# so `git pull` never overwrites real guest messages.
+/data/
+
+# Editor / OS noise
+.DS_Store
+*.log

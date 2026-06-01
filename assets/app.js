@@ -58,43 +58,109 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    function handleRsvp(e) {
+    async function handleRsvp(e) {
       e.preventDefault();
       const form = e.target;
-      const name = form.querySelector('input').value;
-      const message = form.querySelector('textarea').value;
+      const nameInput = form.querySelector('input');
+      const messageInput = form.querySelector('textarea');
+      const name = nameInput.value.trim();
+      const message = messageInput.value.trim();
 
-      if (message.trim()) {
-        const wishCard = document.createElement('div');
-        wishCard.className = 'wish-card';
+      const btn = form.querySelector('.btn-rsvp');
+      const originalText = btn.textContent;
+
+      if (!message) {
+        messageInput.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Mengirim...';
+
+      try {
+        const res = await fetch(WISHES_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, message })
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Gagal mengirim ucapan.');
+
+        prependWish(json.data, true);
+        form.reset();
+
+        btn.textContent = 'Terima Kasih! ✓';
+        btn.style.background = 'var(--gold)';
+      } catch (err) {
+        console.error(err);
+        btn.textContent = 'Gagal, coba lagi';
+        btn.style.background = '#b00020';
+      } finally {
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 2500);
+      }
+    }
+
+    function prependWish(wish, animate) {
+      const wishList = document.getElementById('wishesList');
+      if (!wishList) return;
+
+      const empty = wishList.querySelector('.wishes-empty');
+      if (empty) empty.remove();
+
+      const wishCard = document.createElement('div');
+      wishCard.className = 'wish-card';
+      wishCard.innerHTML = `
+        <div class="wish-name">${escapeHtml(wish.name || 'Tanpa Nama')}</div>
+        <div class="wish-text">${escapeHtml(wish.message || '')}</div>
+        <div class="wish-time">${timeAgo(wish.created_at)}</div>
+      `;
+
+      if (animate) {
         wishCard.style.opacity = '0';
         wishCard.style.transform = 'translateY(20px)';
-        wishCard.innerHTML = `
-          <div class="wish-name">${escapeHtml(name)}</div>
-          <div class="wish-text">${escapeHtml(message)}</div>
-          <div class="wish-time">Baru saja</div>
-        `;
-
-        const wishList = document.getElementById('wishesList');
         wishList.insertBefore(wishCard, wishList.firstChild);
-
         requestAnimationFrame(() => {
           wishCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
           wishCard.style.opacity = '1';
           wishCard.style.transform = 'translateY(0)';
         });
+      } else {
+        wishList.appendChild(wishCard);
       }
+    }
 
-      form.reset();
+    async function loadWishes() {
+      const wishList = document.getElementById('wishesList');
+      if (!wishList) return;
 
-      const btn = form.querySelector('.btn-rsvp');
-      const originalText = btn.textContent;
-      btn.textContent = 'Terima Kasih! ✓';
-      btn.style.background = 'var(--gold)';
-      setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = '';
-      }, 2500);
+      try {
+        const res = await fetch(WISHES_API, { headers: { 'Accept': 'application/json' } });
+        const json = await res.json();
+        const items = (json && json.data) ? json.data : [];
+        wishList.innerHTML = '';
+        if (!items.length) {
+          wishList.innerHTML = '<div class="wishes-empty">Jadilah yang pertama memberikan ucapan & doa.</div>';
+          return;
+        }
+        items.forEach(w => prependWish(w, false));
+      } catch (err) {
+        console.error('Gagal memuat ucapan:', err);
+      }
+    }
+
+    function timeAgo(ts) {
+      if (!ts) return 'Baru saja';
+      const then = Number(ts) * 1000;
+      const diff = Math.floor((Date.now() - then) / 1000);
+      if (diff < 60) return 'Baru saja';
+      if (diff < 3600) return Math.floor(diff / 60) + ' menit lalu';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' jam lalu';
+      if (diff < 2592000) return Math.floor(diff / 86400) + ' hari lalu';
+      return new Date(then).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' });
     }
 
     function escapeHtml(text) {
