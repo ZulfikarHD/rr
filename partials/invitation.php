@@ -11,6 +11,7 @@ $showRekening = $showRekening ?? false;
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<?= $base ?>assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
   <audio src="<?= $base ?>assets/music.mp3" id="music" loop preload="auto" style="display:none"></audio>
@@ -232,7 +233,7 @@ $showRekening = $showRekening ?? false;
           <img class="couple-photo-img" src="<?= $base ?>assets/raka01.png" alt="Raka Ditya Septiawan">
         </div>
         <h3 class="couple-name">Raka Ditya Septiawan</h3>
-        <p class="couple-parents">Putra pertama dari<br>Bapak Irawan & Ibu Erna Purwati</p>
+        <p class="couple-parents text-base">Putra pertama dari<br>Bapak Irawan & Ibu Erna Purwati</p>
       </div>
 
       <div style="position: relative; text-align: center;">
@@ -258,7 +259,7 @@ $showRekening = $showRekening ?? false;
           <img class="couple-photo-img" src="<?= $base ?>assets/risti01.png" alt="Risti Fatihatul Afifah">
         </div>
         <h3 class="couple-name">Risti Fatihatul Afifah</h3>
-        <p class="couple-parents">Putri pertama dari<br>Bapak Suprapto & Ibu Rusminah</p>
+        <p class="couple-parents text-base">Putri pertama dari<br>Bapak Suprapto & Ibu Rusminah</p>
       </div>
     </div>
   </section>
