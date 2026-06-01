@@ -463,13 +463,29 @@ $showRekening = $showRekening ?? false;
           <div class="gift-account-name">a.n. RAKADITYA SEPTIAWAN</div>
         </div>
 
-        <button class="gift-copy-btn" id="copyBtn" onclick="copyAccountNumber()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          Salin Nomor Rekening
-        </button>
+        <div class="gift-bank-info">
+          <div class="gift-bank-name">Bank BCA Digital</div>
+          <div class="gift-account-number" id="accountNumber">005880384943</div>
+          <div class="gift-account-name">a.n. RAKADITYA SEPTIAWAN</div>
+        </div>
+        
+        <div class="gift-copy-btn-container">
+          <button class="gift-copy-btn" id="copyBtnMandiri" onclick="copyAccountNumberMandiri()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Mandiri
+          </button>
+          
+          <button class="gift-copy-btn" id="copyBtnBCA" onclick="copyAccountNumberBCA()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+              BCA
+            </button>
+        </div>
       </div>
     </div>
   </section>
