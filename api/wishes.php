@@ -5,7 +5,9 @@ declare(strict_types=1);
 date_default_timezone_set('Asia/Jakarta');
 
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 $dataDir = __DIR__ . '/../data';
 $dbFile  = $dataDir . '/wishes.sqlite';
@@ -13,6 +15,10 @@ $dbFile  = $dataDir . '/wishes.sqlite';
 if (!is_dir($dataDir)) {
     @mkdir($dataDir, 0775, true);
 }
+
+// Diagnostic: open <site>/api/wishes.php?debug=1 in a browser to see
+// whether the data folder is writable and how many wishes are stored.
+$debug = isset($_GET['debug']);
 
 try {
     $pdo = new PDO('sqlite:' . $dbFile);
@@ -25,7 +31,28 @@ try {
     )');
 } catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database tidak dapat diakses.'], JSON_UNESCAPED_UNICODE);
+    echo json_encode([
+        'error' => 'Database tidak dapat diakses.',
+        'detail' => $debug ? $e->getMessage() : null,
+        'data_dir' => $debug ? $dataDir : null,
+        'data_dir_writable' => $debug ? is_writable($dataDir) : null,
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ($debug) {
+    $count = (int) $pdo->query('SELECT COUNT(*) FROM wishes')->fetchColumn();
+    echo json_encode([
+        'debug'             => true,
+        'php_version'       => PHP_VERSION,
+        'pdo_sqlite'        => extension_loaded('pdo_sqlite'),
+        'data_dir'          => realpath($dataDir) ?: $dataDir,
+        'data_dir_writable' => is_writable($dataDir),
+        'db_file'           => $dbFile,
+        'db_exists'         => file_exists($dbFile),
+        'db_writable'       => file_exists($dbFile) ? is_writable($dbFile) : null,
+        'rows_stored'       => $count,
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     exit;
 }
 
@@ -73,14 +100,23 @@ if ($method === 'POST') {
 
     $createdAt = time();
 
-    $stmt = $pdo->prepare(
-        'INSERT INTO wishes (name, message, created_at) VALUES (:name, :message, :created_at)'
-    );
-    $stmt->execute([
-        ':name'       => $name,
-        ':message'    => $message,
-        ':created_at' => $createdAt,
-    ]);
+    try {
+        $stmt = $pdo->prepare(
+            'INSERT INTO wishes (name, message, created_at) VALUES (:name, :message, :created_at)'
+        );
+        $stmt->execute([
+            ':name'       => $name,
+            ':message'    => $message,
+            ':created_at' => $createdAt,
+        ]);
+    } catch (Throwable $e) {
+        http_response_code(500);
+        echo json_encode([
+            'error'  => 'Gagal menyimpan ucapan (folder data tidak bisa ditulis?).',
+            'detail' => $debug ? $e->getMessage() : null,
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 
     echo json_encode([
         'data' => [

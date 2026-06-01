@@ -138,7 +138,8 @@
       if (!wishList) return;
 
       try {
-        const res = await fetch(WISHES_API, { headers: { 'Accept': 'application/json' } });
+        const url = WISHES_API + (WISHES_API.includes('?') ? '&' : '?') + '_=' + Date.now();
+        const res = await fetch(url, { cache: 'no-store', headers: { 'Accept': 'application/json' } });
         const json = await res.json();
         const items = (json && json.data) ? json.data : [];
         wishList.innerHTML = '';
