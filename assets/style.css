@@ -590,6 +590,23 @@
       transform: translateY(-2px);
     }
 
+    .hp-field {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .rsvp-status {
+      text-align: center;
+      font-size: 0.8rem;
+      min-height: 1.1rem;
+      margin-top: 0.3rem;
+    }
+
     /* ===== WISHES SECTION ===== */
     .wishes-section {
       background: var(--white);

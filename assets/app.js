@@ -61,27 +61,37 @@
     async function handleRsvp(e) {
       e.preventDefault();
       const form = e.target;
-      const nameInput = form.querySelector('input');
-      const messageInput = form.querySelector('textarea');
+      const nameInput = form.querySelector('#rsvpName') || form.querySelector('input');
+      const messageInput = form.querySelector('#rsvpMessage') || form.querySelector('textarea');
+      const honeypot = form.querySelector('#rsvpWebsite');
+      const status = form.querySelector('#rsvpStatus');
       const name = nameInput.value.trim();
       const message = messageInput.value.trim();
 
       const btn = form.querySelector('.btn-rsvp');
       const originalText = btn.textContent;
 
+      const setStatus = (msg, ok) => {
+        if (!status) return;
+        status.textContent = msg || '';
+        status.style.color = ok ? 'var(--green-deep)' : '#b00020';
+      };
+
       if (!message) {
         messageInput.focus();
+        setStatus('Ucapan tidak boleh kosong.', false);
         return;
       }
 
       btn.disabled = true;
       btn.textContent = 'Mengirim...';
+      setStatus('', true);
 
       try {
         const res = await fetch(WISHES_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, message })
+          body: JSON.stringify({ name, message, website: honeypot ? honeypot.value : '' })
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Gagal mengirim ucapan.');
@@ -91,10 +101,12 @@
 
         btn.textContent = 'Terima Kasih! ✓';
         btn.style.background = 'var(--gold)';
+        setStatus('Terima kasih, ucapan Anda telah terkirim.', true);
       } catch (err) {
         console.error(err);
-        btn.textContent = 'Gagal, coba lagi';
+        btn.textContent = 'Gagal';
         btn.style.background = '#b00020';
+        setStatus(err.message || 'Gagal mengirim ucapan.', false);
       } finally {
         setTimeout(() => {
           btn.textContent = originalText;

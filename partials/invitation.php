@@ -492,13 +492,15 @@ $showRekening = $showRekening ?? false;
       <form class="rsvp-form reveal" id="rsvpForm" onsubmit="handleRsvp(event)">
         <div class="form-group">
           <label>Nama Lengkap</label>
-          <input type="text" placeholder="Masukkan nama lengkap" required>
+          <input type="text" id="rsvpName" placeholder="Masukkan nama lengkap" required>
         </div>
         <div class="form-group">
           <label>Ucapan & Doa</label>
-          <textarea placeholder="Tulis ucapan dan doa untuk kedua mempelai..."></textarea>
+          <textarea id="rsvpMessage" placeholder="Tulis ucapan dan doa untuk kedua mempelai..."></textarea>
         </div>
+        <input type="text" id="rsvpWebsite" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button type="submit" class="btn-rsvp">Kirim Ucapan</button>
+        <p class="rsvp-status" id="rsvpStatus" role="status"></p>
       </form>
     </div>
   </section>
