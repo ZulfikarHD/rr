@@ -1,6 +1,33 @@
 <?php
 $base = $base ?? '';
 $showRekening = $showRekening ?? false;
+
+// Build an absolute base URL (needed by WhatsApp/Facebook for link previews).
+$ogScheme = (
+    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
+    || (int) ($_SERVER['SERVER_PORT'] ?? 80) === 443
+) ? 'https' : 'http';
+$ogHost   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+
+// Resolve "<script dir>/<relative base>" into a clean absolute path.
+$ogParts = [];
+foreach (explode('/', $scriptDir . '/' . $base) as $seg) {
+    if ($seg === '' || $seg === '.') {
+        continue;
+    }
+    if ($seg === '..') {
+        array_pop($ogParts);
+        continue;
+    }
+    $ogParts[] = $seg;
+}
+$ogBaseUrl = $ogScheme . '://' . $ogHost . '/' . ($ogParts ? implode('/', $ogParts) . '/' : '');
+$ogImage   = $ogBaseUrl . 'assets/og-image.png';
+$ogUrl     = $ogBaseUrl . ($showRekening ? 'gift/' : '');
+$ogTitle   = 'Undangan Pernikahan Raka & Risti';
+$ogDesc    = 'Dengan memohon rahmat Allah SWT, kami mengundang Anda untuk hadir di hari bahagia kami — 27 Juni 2026.';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -8,6 +35,32 @@ $showRekening = $showRekening ?? false;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Undangan Pernikahan - Raka & Risti</title>
+  <meta name="description" content="<?= htmlspecialchars($ogDesc, ENT_QUOTES) ?>">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="<?= $base ?>assets/icon.png">
+  <link rel="apple-touch-icon" href="<?= $base ?>assets/icon.png">
+
+  <!-- Open Graph (WhatsApp, Facebook, Telegram link preview) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Undangan Pernikahan Raka &amp; Risti">
+  <meta property="og:title" content="<?= htmlspecialchars($ogTitle, ENT_QUOTES) ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($ogDesc, ENT_QUOTES) ?>">
+  <meta property="og:url" content="<?= htmlspecialchars($ogUrl, ENT_QUOTES) ?>">
+  <meta property="og:image" content="<?= htmlspecialchars($ogImage, ENT_QUOTES) ?>">
+  <meta property="og:image:secure_url" content="<?= htmlspecialchars($ogImage, ENT_QUOTES) ?>">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Raka &amp; Risti">
+  <meta property="og:locale" content="id_ID">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<?= htmlspecialchars($ogTitle, ENT_QUOTES) ?>">
+  <meta name="twitter:description" content="<?= htmlspecialchars($ogDesc, ENT_QUOTES) ?>">
+  <meta name="twitter:image" content="<?= htmlspecialchars($ogImage, ENT_QUOTES) ?>">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<?= $base ?>assets/style.css">
