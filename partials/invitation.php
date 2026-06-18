@@ -511,15 +511,15 @@ $ogDesc    = 'Dengan memohon rahmat Allah SWT, kami mengundang Anda untuk hadir 
         </p>
 
         <div class="gift-bank-info">
-          <div class="gift-bank-name">Bank Mandiri</div>
-          <div class="gift-account-number" id="accountNumber">1260007420150</div>
+          <div class="gift-bank-name">OVO</div>
+          <div class="gift-account-number" id="accountNumberOVO">085210852993</div>
           <div class="gift-account-name">a.n. RAKADITYA SEPTIAWAN</div>
-          <button class="gift-copy-btn" id="copyBtnMandiri" onclick="copyAccountNumberMandiri()">
+          <button class="gift-copy-btn" id="copyBtnOVO" onclick="copyAccountNumberOVO()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
             </svg>
-            Salin Nomor Rekening
+            Salin Nomor OVO
           </button>
         </div>
 
